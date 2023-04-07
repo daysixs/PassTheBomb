@@ -11,16 +11,18 @@ public class PlayerMovement : NetworkBehaviour
     private Camera mainCamera;
 
     #region server
+
     [Command]
     private void CmdMove(Vector3 position)
     {
-        if(!NavMesh.SamplePosition(position, out NavMeshHit hit, 1f, NavMesh.AllAreas))
+        if (!NavMesh.SamplePosition(position, out NavMeshHit hit, 1f, NavMesh.AllAreas))
         {
             return;
         }
         agent.SetDestination(hit.position);
     }
-    #endregion
+
+    #endregion server
 
     #region client
 
@@ -34,13 +36,13 @@ public class PlayerMovement : NetworkBehaviour
     private void Update()
     {
         // make sure object belongs to the client
-        if(!isOwned) // if(!hasAuthority) is the old function
+        if (!isOwned) // if(!hasAuthority) is the old function
         {
             return;
         }
 
         // check the right mouse buton input
-        if(!Input.GetMouseButtonDown(0))
+        if (!Input.GetMouseButtonDown(0))
         {
             return;
         }
@@ -49,7 +51,7 @@ public class PlayerMovement : NetworkBehaviour
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
         // grab the scene where it is hit
-        if(!Physics.Raycast(ray,out RaycastHit hit, Mathf.Infinity))
+        if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
         {
             return;
         }
@@ -57,6 +59,5 @@ public class PlayerMovement : NetworkBehaviour
         CmdMove(hit.point);
     }
 
-
-    #endregion
+    #endregion client
 }

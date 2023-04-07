@@ -11,13 +11,14 @@ public class MyNetworkPlayer : NetworkBehaviour
 
     [SyncVar(hook = nameof(HandleDisplayNameUpdate))]
     [SerializeField]
-    private string displayName = "Mising Name";
+    private string displayName = "Missing Name";
 
     [SyncVar(hook = nameof(HandleDisplayColorUpdate))]
     [SerializeField]
     private Color displayColor = Color.black;
 
     #region server
+
     [Server]
     public void setDisplayName(string newDisplayName)
     {
@@ -34,26 +35,29 @@ public class MyNetworkPlayer : NetworkBehaviour
     private void CmdSetDisplayName(string newDisplayName)
     {
         // server authority to limit displayName into 2-20 letter length
-        if(newDisplayName.Length < 2 || newDisplayName.Length > 20)
+        if (newDisplayName.Length < 2 || newDisplayName.Length > 20)
         {
             return;
         }
         RpcDisplayNewName(newDisplayName);
         setDisplayName(newDisplayName);
     }
-    #endregion
+
+    #endregion server
 
     #region client
+
     private void HandleDisplayColorUpdate(Color oldColor, Color newColor)
     {
         displayColorRenderer.material.SetColor("_BaseColor", newColor);
     }
+
     private void HandleDisplayNameUpdate(string oldName, string newName)
     {
         displayNameText.text = newName;
     }
 
-    [ContextMenu ("Set This Name")]
+    [ContextMenu("Set This Name")]
     private void SetThisName()
     {
         CmdSetDisplayName("My New Name");
@@ -65,5 +69,5 @@ public class MyNetworkPlayer : NetworkBehaviour
         Debug.Log(newDisplayName);
     }
 
-    #endregion
+    #endregion client
 }
