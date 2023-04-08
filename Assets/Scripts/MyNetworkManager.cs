@@ -9,7 +9,7 @@ public class MyNetworkManager : NetworkManager
     [SerializeField] private int minPlayers = 2;
 
     [Header("Game")]
-    [SerializeField] private MyNetworkManager roundSystem = null;
+    [SerializeField] private GameObject roundSystem = null;
 
     public List<MyNetworkPlayer> roomPlayers { get; } = new List<MyNetworkPlayer>();
 
@@ -54,12 +54,9 @@ public class MyNetworkManager : NetworkManager
         base.OnServerAddPlayer(conn);
         MyNetworkPlayer player = conn.identity.GetComponent<MyNetworkPlayer>();
 
-        bool isReady = roomPlayers.Count == 2;
+        //IsReadyToStart();
 
-        if (isReady)
-        {
-            MyNetworkManager roundSystemInstance = Instantiate(roundSystem);
-        }
+        //GameObject roundSystemInstance = Instantiate(roundSystem);
 
         player.setDisplayName($"Player {numPlayers}");
 
