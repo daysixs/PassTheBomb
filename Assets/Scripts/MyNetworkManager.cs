@@ -53,7 +53,6 @@ public class MyNetworkManager : NetworkManager
 
         player.setDisplayColor(displayColor);
 
-
         try
         {
             OnServerAllJoined?.Invoke(conn);
