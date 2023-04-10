@@ -50,6 +50,7 @@ public class MyNetworkPlayer : NetworkBehaviour
     private void HandleDisplayColorUpdate(Color oldColor, Color newColor)
     {
         displayColorRenderer.material.SetColor("_BaseColor", newColor);
+        displayNameText.color = newColor;
     }
 
     private void HandleDisplayNameUpdate(string oldName, string newName)
@@ -69,5 +70,6 @@ public class MyNetworkPlayer : NetworkBehaviour
         Debug.Log(newDisplayName);
     }
 
+    
     #endregion client
 }

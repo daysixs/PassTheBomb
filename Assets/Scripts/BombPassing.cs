@@ -9,7 +9,9 @@ public class BombPassing : NetworkBehaviour
     [SerializeField] private GameObject bombPrefab;
 
     [SerializeField] private CinemachineVirtualCamera cam;
-    //public Camera cam;
+
+
+    private NetworkIdentity bombId;
 
     public float range = 100f;
     public Vector3 offset;
@@ -17,19 +19,24 @@ public class BombPassing : NetworkBehaviour
     [Command] 
     public void CmdPassBomb(NetworkIdentity bomb, NetworkIdentity player)
     {
-
+        
         bomb.RemoveClientAuthority();
         bomb.AssignClientAuthority(player.connectionToClient);
-
+        bombId = bomb;
+        Debug.Log("THE BOMB IS ON "+ bombId.connectionToClient.identity.netId);
     }
 
-    [ClientRpc]
+
+
+    [Command]
     private void Spawn()
     {
-        GameObject bomb = Instantiate(bombPrefab);
-        NetworkServer.Spawn(bomb, connectionToClient);
+        GameObject bomb = Instantiate(bombPrefab, transform.position + offset, Quaternion.identity);
+        NetworkServer.Spawn(bomb,connectionToClient);
+        bombId = bomb.GetComponent<NetworkIdentity>();   
     }
 
+    
     public override void OnStartAuthority()
     {
         if(isLocalPlayer)
@@ -37,12 +44,11 @@ public class BombPassing : NetworkBehaviour
             cam.gameObject.SetActive(true);
         }
 
-        if(isServer)
+        if (isServer)
         {
             Spawn();
-            Debug.Log("You got bomb");
         }
-        
+
     }
 
 
@@ -55,15 +61,17 @@ public class BombPassing : NetworkBehaviour
             return;
         }
 
+        if(bombId == null)
+        {
+            Debug.Log("BOMB ID NULL");
+            return;
+        }
 
-        //if (bomb.isOwned)
-        //{
-        //    bomb.gameObject.SetActive(true);
-        //}
-        //else
-        //{
-        //    bomb.gameObject.SetActive(false);
-        //}
+        if (!bombId.isOwned)
+        {
+            Debug.Log("You got no bomb");
+            return;
+        }
 
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
         Debug.DrawRay(ray.origin, ray.direction * range);
@@ -75,13 +83,17 @@ public class BombPassing : NetworkBehaviour
 
                 if (hit.collider.TryGetComponent(out NetworkIdentity targetPlayer))
                 {
-                    Debug.Log(hit.collider.name + " network identity" + targetPlayer.netId);
-                    //CmdPassBomb(bomb, targetPlayer);
-                }
+                    Debug.Log("Bomb" + bombId + "Pass to" + hit.collider.name + " network identity" + targetPlayer.netId);
+                    bombId.gameObject.transform.position = targetPlayer.gameObject.transform.position + new Vector3(offset.x, offset.y, -offset.z);
+                    CmdPassBomb(bombId, targetPlayer);
 
+                }
             }
 
         }
+
+
+
     }
 
 }

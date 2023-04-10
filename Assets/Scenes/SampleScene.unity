@@ -578,10 +578,10 @@ MonoBehaviour:
     type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 1
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 6827368477950935418, guid: dfef213f9e4c42446a7ed9eb498e06a8, type: 3}
   timeInterpolationGui: 0
-  minPlayers: 2
-  roundSystem: {fileID: 0}
+  maxPlayers: 2
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
