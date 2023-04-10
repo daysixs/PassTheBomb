@@ -8,6 +8,16 @@ public class RoundSystem : NetworkBehaviour
     [SerializeField] private Animator anim = null;
     private MyNetworkManager room;
 
+    private MyNetworkManager Room
+    {
+        get
+        {
+            if (room != null) { return room; }
+
+            return room = MyNetworkManager.singleton as MyNetworkManager;
+        }
+    }
+
     public void CountDownFinished()
     {
         anim.enabled = false;
@@ -17,8 +27,7 @@ public class RoundSystem : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        base.OnStartServer();
-        //CheckToStartRound(conn);
+        MyNetworkManager.OnServerAllJoined += CheckToStartRound;
     }
 
     [ServerCallback]
@@ -27,12 +36,18 @@ public class RoundSystem : NetworkBehaviour
         RpcStartRound();
     }
 
-    private void CheckToStartRound(NetworkConnection conn)
+    [Server]
+    private void CheckToStartRound(NetworkConnectionToClient conn)
     {
-        if (room.roomPlayers.Count == 2)
+        if (Room.numPlayers == Room.maxPlayers)
         {
             anim.enabled = true;
             RpcStartCountdown();
+            Debug.Log("Hi");
+        }
+        else
+        {
+            return;
         }
     }
 

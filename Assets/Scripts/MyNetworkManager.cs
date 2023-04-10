@@ -6,7 +6,7 @@ using Mirror;
 public class MyNetworkManager : NetworkManager
 {
     [Header("Player")]
-    [SerializeField] private int minPlayers = 2;
+    [SerializeField] public int maxPlayers = 2;
 
     [Header("Game")]
     [SerializeField] private GameObject roundSystem = null;
@@ -19,7 +19,7 @@ public class MyNetworkManager : NetworkManager
 
     public static event System.Action OnServerStopped;
 
-    public static event System.Action OnServerReadied;
+    public static event System.Action<NetworkConnectionToClient> OnServerAllJoined;
 
     #region server
 
@@ -38,45 +38,46 @@ public class MyNetworkManager : NetworkManager
         roomPlayers.Clear();
 
         OnClientDisconnected?.Invoke();
-    }
-
-    public override void OnServerConnect(NetworkConnectionToClient conn)
-    {
-        if (numPlayers >= maxConnections)
-        {
-            conn.Disconnect();
-            return;
-        }
+        OnServerStopped?.Invoke();
     }
 
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
         base.OnServerAddPlayer(conn);
+
         MyNetworkPlayer player = conn.identity.GetComponent<MyNetworkPlayer>();
-
-        //IsReadyToStart();
-
-        //GameObject roundSystemInstance = Instantiate(roundSystem);
 
         player.setDisplayName($"Player {numPlayers}");
 
         Color displayColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
 
         player.setDisplayColor(displayColor);
+
+        try
+        {
+            OnServerAllJoined?.Invoke(conn);
+
+            Debug.Log("Inside delegate invocation");
+
+            GameObject roundSystemInstance = Instantiate(roundSystem);
+            NetworkServer.Spawn(roundSystemInstance);
+            Debug.Log("Game is starting");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Error invoking OnServerAllJoined delegate: {e}");
+        }
     }
 
-    private bool IsReadyToStart()
+    public override void OnServerDisconnect(NetworkConnectionToClient conn)
     {
-        if (numPlayers < minPlayers && numPlayers > minPlayers) { return false; }
-
-        foreach (var player in roomPlayers)
+        if (conn.identity != null)
         {
-            if (numPlayers != 2)
-            {
-                return false;
-            }
+            MyNetworkPlayer player = conn.identity.GetComponent<MyNetworkPlayer>();
+            roomPlayers.Remove(player);
         }
-        return true;
+
+        base.OnServerDisconnect(conn);
     }
 
     #endregion server
