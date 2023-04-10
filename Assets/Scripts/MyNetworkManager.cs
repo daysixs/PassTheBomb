@@ -8,8 +8,8 @@ public class MyNetworkManager : NetworkManager
     [Header("Player")]
     [SerializeField] public int maxPlayers = 2;
 
-    [Header("Game")]
-    [SerializeField] private GameObject roundSystem = null;
+    //[Header("Game")]
+    //[SerializeField] private GameObject roundSystem = null;
 
     public List<MyNetworkPlayer> roomPlayers { get; } = new List<MyNetworkPlayer>();
 
@@ -59,9 +59,9 @@ public class MyNetworkManager : NetworkManager
 
             Debug.Log("Inside delegate invocation");
 
-            GameObject roundSystemInstance = Instantiate(roundSystem);
-            NetworkServer.Spawn(roundSystemInstance);
-            Debug.Log("Game is starting");
+            //GameObject roundSystemInstance = Instantiate(roundSystem);
+            //NetworkServer.Spawn(roundSystemInstance);
+            //Debug.Log("Game is starting");
         }
         catch (System.Exception e)
         {

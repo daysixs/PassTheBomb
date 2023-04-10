@@ -606,16 +606,15 @@ MonoBehaviour:
   networkAddress: localhost
   maxConnections: 100
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 4964197909627955851, guid: af411d127bbb0ca4b958336ddfc87e09,
+  playerPrefab: {fileID: 4964197909627955851, guid: d1f8f62fc61344548993b73bd407b079,
     type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 1
   spawnPrefabs: []
   timeInterpolationGui: 0
   maxPlayers: 2
-  roundSystem: {fileID: 3822927278784978771, guid: 00b786bf0c542f04aac1647732fda41b,
+  roundSystem: {fileID: 4964197909627955851, guid: d1f8f62fc61344548993b73bd407b079,
     type: 3}
-  anim: {fileID: 7685137896537984801, guid: 00b786bf0c542f04aac1647732fda41b, type: 3}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
